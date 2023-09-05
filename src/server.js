@@ -59,15 +59,6 @@ const init = async () => {
         return newResponse;
       }
 
-      if (response instanceof NotFoundError) {
-        const newResponse = h.response({
-          status: 'fail',
-          message: response.message,
-        });
-        newResponse.code(response.statusCode);
-        return newResponse;
-      }
-
       if (!response.isServer) {
         return h.continue;
       }
@@ -77,7 +68,6 @@ const init = async () => {
         message: 'Maaf, terjadi kegagalan pada server kami.',
       });
       newResponse.code(500);
-      console.error(response.message);
       return newResponse;
     }
     return h.continue;

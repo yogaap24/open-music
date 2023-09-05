@@ -27,23 +27,29 @@ class SongsHandler {
   async getSongsHandler(request, h) {
     const { title, performer } = request.query;
     const songs = await this._service.getSongs(title, performer);
-    return {
+
+    const response = h.response({
       status: 'success',
       data: {
         songs,
       },
-    };
+    });
+    response.code(200);
+    return response;
   }
 
   async getSongByIdHandler(request, h) {
     const { id } = request.params;
     const song = await this._service.getSongById(id);
-    return {
+
+    const response = h.response({
       status: 'success',
       data: {
         song,
       },
-    };
+    });
+    response.code(200);
+    return response;
   }
 
   async putSongByIdHandler(request, h) {
@@ -52,19 +58,24 @@ class SongsHandler {
 
     await this._service.editSongById(id, request.payload);
 
-    return {
+    const response = h.response({
       status: 'success',
       message: 'lagu berhasil diperbarui',
-    };
+    });
+    response.code(200);
+    return response;
   }
 
   async deleteSongByIdHandler(request, h) {
     const { id } = request.params;
     await this._service.deleteSongById(id);
-    return {
+
+    const response = h.response({
       status: 'success',
       message: 'lagu berhasil dihapus',
-    };
+    });
+    response.code(200);
+    return response;
   }
 }
 
