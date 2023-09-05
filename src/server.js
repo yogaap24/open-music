@@ -4,7 +4,6 @@ const Hapi = require('@hapi/hapi');
 
 // Exceptions
 const ClientError = require('./exceptions/ClientError');
-const NotFoundError = require('./exceptions/NotFoundError');
 
 // Albuns
 const albums = require('./api/albums');
