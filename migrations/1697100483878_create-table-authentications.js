@@ -1,16 +1,11 @@
 /* eslint-disable camelcase */
+
+exports.shorthands = undefined;
+
 exports.up = (pgm) => {
-  pgm.createTable('albums', {
-    id: {
-      type: 'VARCHAR(50)',
-      primaryKey: true,
-    },
-    name: {
-      type: 'VARCHAR(255)',
-      notNull: true,
-    },
-    year: {
-      type: 'INTEGER',
+  pgm.createTable('authentications', {
+    token: {
+      type: 'TEXT',
       notNull: true,
     },
     created_at: {
@@ -27,5 +22,5 @@ exports.up = (pgm) => {
 };
 
 exports.down = (pgm) => {
-  pgm.dropTable('albums');
+  pgm.dropTable('authentications');
 };

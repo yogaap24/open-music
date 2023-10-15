@@ -15,7 +15,7 @@ class SongsHandler {
 
     const response = h.response({
       status: 'success',
-      message: 'Lagu berhasil ditambahkan',
+      message: 'Song added successfully',
       data: {
         songId,
       },
@@ -60,7 +60,7 @@ class SongsHandler {
 
     const response = h.response({
       status: 'success',
-      message: 'lagu berhasil diperbarui',
+      message: 'Song update successfully',
     });
     response.code(200);
     return response;
@@ -72,7 +72,7 @@ class SongsHandler {
 
     const response = h.response({
       status: 'success',
-      message: 'lagu berhasil dihapus',
+      message: 'Song delete successfully',
     });
     response.code(200);
     return response;

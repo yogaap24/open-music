@@ -1,6 +1,9 @@
 /* eslint-disable camelcase */
+
+exports.shorthands = undefined;
+
 exports.up = (pgm) => {
-  pgm.createTable('albums', {
+  pgm.createTable('playlists', {
     id: {
       type: 'VARCHAR(50)',
       primaryKey: true,
@@ -9,8 +12,8 @@ exports.up = (pgm) => {
       type: 'VARCHAR(255)',
       notNull: true,
     },
-    year: {
-      type: 'INTEGER',
+    owner: {
+      type: 'VARCHAR(50)',
       notNull: true,
     },
     created_at: {
@@ -24,8 +27,14 @@ exports.up = (pgm) => {
       default: pgm.func('current_timestamp'),
     },
   });
+
+  pgm.addConstraint(
+    'playlists',
+    'fk_playlists.owner_users.id',
+    'FOREIGN KEY(owner) REFERENCES users(id) ON DELETE CASCADE'
+  );
 };
 
 exports.down = (pgm) => {
-  pgm.dropTable('albums');
+  pgm.dropTable('playlists');
 };

@@ -20,7 +20,7 @@ class SongsService {
     });
 
     if (!result.rowCount) {
-      throw new InvariantError('Lagu gagal ditambahkan');
+      throw new InvariantError('Failed to add song');
     }
 
     return result.rows[0].id;
@@ -60,7 +60,7 @@ class SongsService {
     });
 
     if (!result.rowCount) {
-      throw new NotFoundError('Lagu tidak ditemukan');
+      throw new NotFoundError('Song not found');
     }
 
     return result.rows.map(mapSongsDBToModel)[0];
@@ -77,7 +77,7 @@ class SongsService {
     const result = await this._pool.query(query);
 
     if (!result.rowCount) {
-      throw new NotFoundError('Gagal memperbarui lagu. Id tidak ditemukan');
+      throw new NotFoundError('Failed to update song. Id not found');
     }
   }
 
@@ -88,7 +88,7 @@ class SongsService {
     });
 
     if (!result.rowCount) {
-      throw new NotFoundError('Lagu gagal dihapus. Id tidak ditemukan');
+      throw new NotFoundError('Failed to delete song. Id not found');
     }
   }
 }

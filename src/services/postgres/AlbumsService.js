@@ -20,7 +20,7 @@ class AlbumsService {
     const result = await this._pool.query(query);
 
     if (!result.rowCount) {
-      throw new InvariantError('Album gagal ditambahkan');
+      throw new InvariantError('Failed to add album');
     }
 
     return result.rows[0].id;
@@ -38,17 +38,17 @@ class AlbumsService {
     });
 
     if (!result.rowCount) {
-      throw new NotFoundError('Album tidak ditemukan');
+      throw new NotFoundError('Album not found');
     }
 
     const resultSongs = await this._pool.query({
       text: 'SELECT id, title, performer FROM songs WHERE album_id = $1',
-      values: [id]
+      values: [id],
     });
 
     return {
       ...result.rows.map(mapAlbumsDBToModel)[0],
-      songs: resultSongs.rows
+      songs: resultSongs.rows,
     };
   }
 
@@ -61,7 +61,7 @@ class AlbumsService {
     const result = await this._pool.query(query);
 
     if (!result.rowCount) {
-      throw new NotFoundError('Gagal memperbarui album. Id tidak ditemukan');
+      throw new NotFoundError('Failed to update album. Id not found');
     }
   }
 
@@ -74,7 +74,7 @@ class AlbumsService {
     const result = await this._pool.query(query);
 
     if (!result.rowCount) {
-      throw new NotFoundError('Album gagal dihapus. Id tidak ditemukan');
+      throw new NotFoundError('Failed to delete album. Id not found');
     }
   }
 }

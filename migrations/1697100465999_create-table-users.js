@@ -1,17 +1,25 @@
 /* eslint-disable camelcase */
+
+exports.shorthands = undefined;
+
 exports.up = (pgm) => {
-  pgm.createTable('albums', {
+  pgm.createTable('users', {
     id: {
       type: 'VARCHAR(50)',
-      primaryKey: true,
+      primaryKey: true
     },
-    name: {
+    username: {
+      type: 'VARCHAR(50)',
+      unique: true,
+      notNull: true
+    },
+    password: {
+      type: 'TEXT',
+      notNull: true
+    },
+    fullname: {
       type: 'VARCHAR(255)',
-      notNull: true,
-    },
-    year: {
-      type: 'INTEGER',
-      notNull: true,
+      notNull: true
     },
     created_at: {
       type: 'TIMESTAMP',
@@ -27,5 +35,5 @@ exports.up = (pgm) => {
 };
 
 exports.down = (pgm) => {
-  pgm.dropTable('albums');
+  pgm.dropTable('users');
 };
