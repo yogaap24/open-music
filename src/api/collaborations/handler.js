@@ -51,7 +51,7 @@ class CollaborationsHandler {
       status: 'success',
       message: 'Colaboration delete successfully',
     });
-    response.code(500);
+    response.code(200);
     return response;
   }
 }

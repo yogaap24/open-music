@@ -136,6 +136,7 @@ const init = async () => {
           message: response.message,
         });
         newResponse.code(response.statusCode);
+        // console.error(newResponse);
         return newResponse;
       }
 
@@ -148,6 +149,7 @@ const init = async () => {
         message: 'Sorry, there is a failure on our server.',
       });
       newResponse.code(500);
+      // console.error(newResponse);
       return newResponse;
     }
     return h.continue;
