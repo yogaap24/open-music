@@ -1,17 +1,19 @@
 const autoBind = require('auto-bind');
 
 class AlbumsHandler {
-  constructor(service, validator) {
-    this._service = service;
-    this._validator = validator;
+  constructor(albumsService, albumsValidator, storageService, uploadsValidator) {
+    this._albumsService = albumsService;
+    this._albumsValidator = albumsValidator;
+    this._storageService = storageService;
+    this._uploadsValidator = uploadsValidator;
 
     autoBind(this);
   }
 
   async postAlbumHandler(request, h) {
-    this._validator.validateAlbumsPayload(request.payload);
+    this._albumsValidator.validateAlbumsPayload(request.payload);
 
-    const albumId = await this._service.addAlbum(request.payload);
+    const albumId = await this._albumsService.addAlbum(request.payload);
 
     const response = h.response({
       status: 'success',
@@ -25,7 +27,7 @@ class AlbumsHandler {
   }
 
   async getAlbumsHandler(h) {
-    const albums = await this._service.getAlbums();
+    const albums = await this._albumsService.getAlbums();
 
     const response = h.response({
       status: 'success',
@@ -39,7 +41,7 @@ class AlbumsHandler {
 
   async getAlbumByIdHandler(request, h) {
     const { id } = request.params;
-    const album = await this._service.getAlbumById(id);
+    const album = await this._albumsService.getAlbumById(id);
 
     const response = h.response({
       status: 'success',
@@ -52,9 +54,9 @@ class AlbumsHandler {
   }
 
   async putAlbumByIdHandler(request, h) {
-    this._validator.validateAlbumsPayload(request.payload);
+    this._albumsValidator.validateAlbumsPayload(request.payload);
     const { id } = request.params;
-    await this._service.editAlbumById(id, request.payload);
+    await this._albumsService.editAlbumById(id, request.payload);
 
     const response = h.response({
       status: 'success',
@@ -66,12 +68,57 @@ class AlbumsHandler {
 
   async deleteAlbumByIdHandler(request, h) {
     const { id } = request.params;
-    await this._service.deleteAlbumById(id);
+    await this._albumsService.deleteAlbumById(id);
 
     const response = h.response({
       status: 'success',
       message: 'Album delete successfully',
     });
+    response.code(200);
+    return response;
+  }
+
+  async postUploadImageHandler(req, h) {
+    const { id } = req.params;
+    const { cover } = req.payload;
+
+    await this._albumsService.isAlbumExist(id);
+    this._uploadsValidator.validateImageHeaders(cover.hapi.headers);
+
+    const fileLocation = await this._storageService.writeFile(cover, cover.hapi);
+    await this._albumsService.editAlbumCoverById(id, fileLocation);
+
+    const response = h.response({
+      status: 'success',
+      message: 'Cover image added successfully',
+    });
+    response.code(201);
+    return response;
+  }
+
+  async postLikesAlbumHandler(req, h) {
+    const { id } = req.params;
+    const { id: credentialId } = req.auth.credentials;
+
+    const message = await this._albumsService.likeTheAlbum(id, credentialId);
+    const response = h.response({
+      status: 'success',
+      message,
+    });
+    response.code(201);
+    return response;
+  }
+
+  async getAlbumLikesByIdHandler(req, h) {
+    const { id } = req.params;
+    const { likes, source } = await this._albumsService.getAlbumLikesById(id);
+    const response = h.response({
+      status: 'success',
+      data: {
+        likes,
+      },
+    });
+    response.header('X-Data-Source', source);
     response.code(200);
     return response;
   }
