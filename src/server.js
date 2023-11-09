@@ -178,7 +178,7 @@ const init = async () => {
         message: 'Sorry, there is a failure on our server.',
       });
       newResponse.code(500);
-      console.error(newResponse);
+      // console.error(newResponse);
       return newResponse;
     }
     return h.continue;
