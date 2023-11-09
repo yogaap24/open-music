@@ -109,6 +109,19 @@ class AlbumsHandler {
     return response;
   }
 
+  async deleteLikesAlbumHandler(req, h) {
+    const { id } = req.params;
+    const { id: credentialId } = req.auth.credentials;
+
+    const message = await this._albumsService.unlikeTheAlbum(id, credentialId);
+    const response = h.response({
+      status: 'success',
+      message,
+    });
+    response.code(200);
+    return response;
+  }
+
   async getAlbumLikesByIdHandler(req, h) {
     const { id } = req.params;
     const { likes, source } = await this._albumsService.getAlbumLikesById(id);

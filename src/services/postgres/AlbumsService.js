@@ -116,7 +116,26 @@ class AlbumsService {
         throw new InvariantError('Failed to like the album');
       }
       message = 'Successfully liked the album';
-    } else {
+    }
+
+    if (result.rowCount) {
+      throw new InvariantError('You already liked this album');
+    }
+
+    await this._cacheService.delete(`user_album_likes:${id}`);
+    return message;
+  }
+
+  async unlikeTheAlbum(id, userId) {
+    await this.isAlbumExist(id);
+
+    const result = await this._pool.query({
+      text: 'SELECT * FROM user_album_likes WHERE album_id = $1 AND user_id = $2',
+      values: [id, userId],
+    });
+
+    let message = '';
+    if (result.rowCount) {
       const resultDelete = await this._pool.query({
         text: 'DELETE FROM user_album_likes WHERE album_id = $1 AND user_id = $2 RETURNING id',
         values: [id, userId],
