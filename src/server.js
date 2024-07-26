@@ -3,6 +3,8 @@ require('dotenv').config();
 const Hapi = require('@hapi/hapi');
 const Jwt = require('@hapi/jwt');
 const Inert = require('@hapi/inert');
+const fs = require('fs');
+const path = require('path');
 const config = require('./utils/config');
 
 // Exceptions
@@ -165,7 +167,15 @@ const init = async () => {
           message: response.message,
         });
         newResponse.code(response.statusCode);
-        // console.error(newResponse);
+        fs.appendFileSync(
+          path.resolve(__dirname, '../src/logs/error.log'),
+          `${new Date().toLocaleString()} : ${response.message}\n`,
+          (err) => {
+            if (err) {
+              console.log(err);
+            }
+          }
+        );
         return newResponse;
       }
 
@@ -178,14 +188,25 @@ const init = async () => {
         message: 'Sorry, there is a failure on our server.',
       });
       newResponse.code(500);
-      // console.error(newResponse);
+      fs.appendFileSync(
+        path.resolve(__dirname, '../src/logs/error.log'),
+        `${new Date().toLocaleString()} : ${response.stack}\n`,
+        (err) => {
+          if (err) {
+            console.log(err);
+          }
+        }
+      );
       return newResponse;
     }
     return h.continue;
   });
 
   await server.start();
-  console.log(`Server berjalan pada ${server.info.uri}`);
+  fs.writeFileSync(
+    path.resolve(__dirname, '../src/logs/app.log'),
+    `${new Date().toLocaleString()} : Server berjalan pada ${server.info.uri}\n`
+  );
 };
 
 init();

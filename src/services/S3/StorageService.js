@@ -1,27 +1,42 @@
-const AWS = require('aws-sdk');
+const Minio = require('minio');
 const config = require('../../utils/config');
 
 class StorageService {
   constructor() {
-    this._S3 = new AWS.S3();
+    this._client = new Minio.Client({
+      endPoint: config.minio.endPoint,
+      port: config.minio.port,
+      useSSL: config.minio.useSSL,
+      accessKey: config.minio.accessKey,
+      secretKey: config.minio.secretKey,
+    });
   }
 
-  writeFile(file, meta) {
-    const parameter = {
-      Bucket: config.s3.bucketName,
-      Key: +new Date() + meta.filename,
-      Body: file._data,
-      ContentType: meta.headers['content-type'],
-    };
+  async writeFile(file, meta) {
+    const bucketName = 'open-music';
+    const objectName = `${+new Date()}-${meta.filename}`;
 
-    return new Promise((resolve, reject) => {
-      this._S3.upload(parameter, (error, data) => {
-        if (error) {
-          return reject(error);
-        }
-        return resolve(data.Location);
-      });
-    });
+    try {
+      await this._client.putObject(
+        bucketName,
+        objectName,
+        file._data,
+        meta.headers['content-type']
+      );
+      return `http://${config.minio.endPoint}:${config.minio.port}/${bucketName}/${objectName}`;
+    } catch (error) {
+      throw new Error(`Error uploading file: ${error.message}`);
+    }
+  }
+
+  async deleteFile(objectName) {
+    const bucketName = 'open-music';
+
+    try {
+      await this._client.removeObject(bucketName, objectName);
+    } catch (error) {
+      throw new Error(`Error deleting file: ${error.message}`);
+    }
   }
 }
 

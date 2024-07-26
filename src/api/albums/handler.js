@@ -68,6 +68,14 @@ class AlbumsHandler {
 
   async deleteAlbumByIdHandler(request, h) {
     const { id } = request.params;
+
+    const album = await this._albumsService.getAlbumById(id);
+
+    if (album.coverUrl != null) {
+      const fileName = album.coverUrl.split('/').slice(-1)[0];
+      await this._storageService.deleteFile(fileName);
+    }
+
     await this._albumsService.deleteAlbumById(id);
 
     const response = h.response({
